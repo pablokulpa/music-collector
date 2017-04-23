@@ -3,6 +3,7 @@ from datetime import date
 import random
 import os.path
 import sys
+import operator
 
 
 # checking file existences
@@ -17,26 +18,28 @@ def read(albumy):
         readCSV = csv.reader(csvfile, delimiter='|')
         tuple1 = ()
         tuple2 = ()
-        for albums in readCSV:
-            tuple1 = albums[0].strip().lower(), albums[1].strip().lower()
-            tuple2 = int(albums[2].strip()), albums[3].strip().lower(), albums[4].strip()
-            albumy.append((tuple(tuple1), tuple(tuple2)))
+        try:
+            for albums in readCSV:
+                tuple1 = albums[0].strip().lower(), albums[1].strip().lower()
+                tuple2 = int(albums[2].strip()), albums[3].strip().lower(), albums[4].strip()
+                albumy.append((tuple(tuple1), tuple(tuple2)))
+        except IndexError:
+                pass
     return albumy
 
 
 # Adding new album to list and after to gile csv
 def adding_album(albumy):
-    author = input("Artist name: ")
-    album_name = input("Write album name: ")
-    year_release = input("Write the year of release: ")
-    genre = input("Write genre: ")
-    lenght = input("Write lenght: ")
+    author = input("Artist name: ").lower()
+    album_name = input("Write album name: ").lower()
+    year_release = input("Write the year of release: ").lower()
+    genre = input("Write genre: ").lower()
+    lenght = input("Write lenght: ").lower()
     tuple1 = ()
     tuple2 = ()
     tuple1 = author, album_name
     tuple2 = year_release, genre, lenght
     albumy.append((tuple1, tuple2))
-    print(albumy)
     with open(csvname, 'w', newline='') as csvfile:
         spamwriter = csv.writer(csvfile, delimiter='|')
         for albums in albumy:
@@ -81,7 +84,14 @@ def random_album_by_genre(albumy):
 
 # Finding album by year
 def find_by_year(albumy):
-    year_search = int(input('Write a year: '))
+    give = True
+    while give:
+        try:
+            year_search = int(input('Write a year: '))
+        except ValueError:
+            print("Wrong sign")
+        else:
+            give = False
     for albums in albumy:
         if year_search == albums[1][0]:
             print('autor:', albums[0][0])
@@ -119,12 +129,19 @@ def find_by_album_letter(albumy):
 
 def find_all_album_one_artist(albumy):
     counter = 0
-    author = input("Write artist name: ")
+    author = input("Write artist name: ").lower()
     for albums in albumy:
         if author in albums[0][0]:
             counter += 1
     print("Albums number:", counter)
 
+
+def longest_time(albumy):
+    album_times = {}
+    for albums in albumy:
+        album_times[albums[0][1]] = albums[1][2]
+    sorted_album = sorted(album_times.items(), key=operator.itemgetter(1))
+    print(sorted_album[-1][0])
 
 # START PROGRAM
 csvname = 'music.csv'
@@ -146,11 +163,13 @@ print('6. Find albums by genre')
 print('7. Calculate the age of all albums')
 print('8. Choose a random album by genre')
 print('9. Show the amount of albums by an artist')
+print('10. Find the longest-time album')
 
-menu_answer = int(input('Write number 1-5: '))
+
+menu_answer = int(input('Write number 1-10: '))
 while menu_answer not in options_list:
     print('Wrong number!')
-    menu_answer = int(input('Write number 1-5: '))
+    menu_answer = int(input('Write number 1-10: '))
 
 
 if menu_answer == options_list[1]:
@@ -171,3 +190,5 @@ elif menu_answer == options_list[8]:
     random_album_by_genre(albumy)
 elif menu_answer == options_list[9]:
     find_all_album_one_artist(albumy)
+elif menu_answer == options_list[10]:
+    longest_time(albumy)
