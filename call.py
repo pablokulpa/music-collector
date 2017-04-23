@@ -163,7 +163,7 @@ print('6. Find albums by genre')
 print('7. Calculate the age of all albums')
 print('8. Choose a random album by genre')
 print('9. Show the amount of albums by an artist')
-print('10. Find the longest-time album')
+print('10. Show the amount of albums by an artist')
 
 
 menu_answer = int(input('Write number 1-10: '))
